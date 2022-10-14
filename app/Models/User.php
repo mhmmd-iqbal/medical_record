@@ -20,6 +20,7 @@ class User extends Authenticatable
     protected $fillable = [
         'username',
         'password',
+        'auth_level'
     ];
 
     /**
@@ -39,4 +40,14 @@ class User extends Authenticatable
      */
     protected $casts = [
     ];
+
+    public function polikliniks()
+    {
+        return $this->hasMany(Poliklinik::class, 'user_id', 'id');
+    }
+
+    public function medicalRecords()
+    {
+        return $this->hasMany(MedicalRecord::class, 'user_id', 'id');
+    }
 }
