@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\AuthRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Validator;
@@ -16,19 +15,16 @@ class AuthController extends Controller
         return view('pages.login');
     }
 
-    public function login(AuthRequest $request)
+    public function login(Request $request)
     {
-        $validate = $request->validated();
         $rules = [
-            'email'                 => 'required|email',
-            'password'              => 'required|string'
+            'username'              => 'required',
+            'password'              => 'required'
         ];
 
         $messages = [
-            'email.required'        => 'Email wajib diisi',
-            'email.email'           => 'Email tidak valid',
+            'email.required'        => 'Username wajib diisi',
             'password.required'     => 'Password wajib diisi',
-            'password.string'       => 'Password harus berupa string'
         ];
 
         $validator = Validator::make($request->all(), $rules, $messages);
@@ -39,7 +35,6 @@ class AuthController extends Controller
 
         $data = [
             'username'  => $request->input('username'),
-            'email'     => $request->input('email'),
             'password'  => $request->input('password'),
         ];
 

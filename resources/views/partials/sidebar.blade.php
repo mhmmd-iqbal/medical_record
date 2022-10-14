@@ -5,7 +5,7 @@
             <div class="header-mobile-inner">
                 <a href="#">
                     <div class="d-flex justify-content-between">
-                        <img src="{{{URL::asset('template/images/icon/algostudio_logo.png')}}}" width="60" height="auto" alt="Cool Admin" />
+                        {{-- <img src="{{{URL::asset('template/images/icon/algostudio_logo.png')}}}" width="60" height="auto" alt="Cool Admin" /> --}}
                     </div>
                 </a>
                 <button class="hamburger hamburger--slider" type="button">
@@ -65,7 +65,7 @@
     <div class="logo">
         <a href="#">
             <div class="d-flex justify-content-between align-items-center">
-                <img src="{{{URL::asset('template/images/icon/algostudio_logo.png')}}}" width="70" height="auto" alt="Cool Admin" />
+                {{-- <img src="{{{URL::asset('template/images/icon/algostudio_logo.png')}}}" width="70" height="auto" alt="Cool Admin" /> --}}
                 <h3 class="text-light">Algostudio</h3>
             </div>
         </a>
@@ -76,30 +76,43 @@
                 <li class="{{ (request()->is('/')) ? 'active' : '' }}">
                     <a href="{{route('dashboard')}} ">
                         <i class="fas fa-tachometer-alt"></i>Dashboard</a>
+                    </li>
+                <li>    
+                    <a href="{{route('dashboard')}} ">
+                        <i class="fas fa-user"></i>List Antrian</a>
                 </li>
-                @can('isAdmin')
-                <li class="has-sub {{ (request()->is('master*')) ? 'active' : '' }}">
+                <li>    
+                    <a href="{{route('dashboard')}} ">
+                        <i class="fas fa-hospital-o"></i>Rekam Medis</a>
+                </li>
+                <li class="has-sub active">
                     <a class="js-arrow" href="#">
                         <i class="fas  fa-th-large"></i>Master Data</a>
                     <ul class="navbar-mobile-sub__list list-unstyled js-sub-list" style="display:{{ (request()->is('master*')) ? 'block' : 'none' }}">
                         <li class="{{ (request()->is('master/user*')) ? 'active' : '' }}">
-                            <a href="{{route('user.index')}}">Data User</a>
+                            <a href="">Data User</a>
                         </li>
                         <li class="{{ (request()->is('master/category*')) ? 'active' : '' }}">
-                            <a href="{{route('category.index')}}">Data Kategori Produk</a>
+                            <a href="">Data Poliklinik</a>
                         </li>
-                        <li class="{{ (request()->is('master/product*')) ? 'active' : '' }}">
-                            <a href="{{route('product.index')}} ">Data Produk</a>
+                        <li class="{{ (request()->is('master/category*')) ? 'active' : '' }}">
+                            <a href="">Data Pasien</a>
                         </li>
                         
                     </ul>
                 </li>
+                
+                <li class="{{ (request()->is('sell*')) ? 'active' : '' }}">
+                    <a href="" class="">
+                        <i class="fas fa-toggle-down"></i>Stock Barang</a>
+                </li>
+                <li class="{{ (request()->is('sell*')) ? 'active' : '' }}">
+                    <a href="" class="">
+                        <i class="fas fa-bar-chart-o"></i>laporan</a>
+                </li>
+                @can('isAdmin')
                 @endcan
                 @canany(['isAdmin', 'isCasheer'])
-                <li class="{{ (request()->is('sell*')) ? 'active' : '' }}">
-                    <a href="{{ route('sell.transaction') }}" class="">
-                        <i class="fas fa-toggle-up"></i>Transaksi Penjualan</a>
-                </li>
                 
                 @endcanany
                 @can('isAdmin')

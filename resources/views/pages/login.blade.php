@@ -48,7 +48,6 @@
                     <div class="login-content">
                         <div class="login-logo">
                             <a href="#">
-                                <img src="{{{URL::asset('template/images/icon/algostudio_logo.png')}}}" width="60" height="auto" alt="Cool Admin" />
                                 <h3>
                                     LOGIN
                                 </h3>
@@ -81,10 +80,6 @@
                             
                             <form action="" method="post">
                                 @csrf
-                                <div class="form-group">
-                                    <label>Email Address</label>
-                                    <input class="au-input au-input--full" type="email" name="email" placeholder="Email">
-                                </div>
                                 <div class="form-group">
                                     <label>Username</label>
                                     <input class="au-input au-input--full" type="username" name="username" placeholder="Username">
