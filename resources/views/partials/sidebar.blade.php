@@ -29,7 +29,7 @@
                         <i class="fas  fa-th-large"></i>Master Data</a>
                     <ul class="navbar-mobile-sub__list list-unstyled js-sub-list" style="display:{{ (request()->is('master*')) ? 'block' : 'none' }}">
                         <li class="{{ (request()->is('master/user*')) ? 'active' : '' }}">
-                            <a href="">Data User</a>
+                            <a href="{{route("master.user.index")}}">Data User</a>
                         </li>
                         <li class="{{ (request()->is('master/category*')) ? 'active' : '' }}">
                             <a href="">Data Kategori Produk</a>
@@ -90,7 +90,7 @@
                         <i class="fas  fa-th-large"></i>Master Data</a>
                     <ul class="navbar-mobile-sub__list list-unstyled js-sub-list" style="display:{{ (request()->is('master*')) ? 'block' : 'none' }}">
                         <li class="{{ (request()->is('master/user*')) ? 'active' : '' }}">
-                            <a href="">Data User</a>
+                            <a href="{{route("master.user.index")}}">Data User</a>
                         </li>
                         <li class="{{ (request()->is('master/category*')) ? 'active' : '' }}">
                             <a href="">Data Poliklinik</a>

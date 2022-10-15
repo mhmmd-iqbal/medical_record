@@ -4,6 +4,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PatientController;
 use App\Http\Controllers\QueueController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -23,6 +24,11 @@ Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
+    Route::group(['prefix' => 'master'], function(){
+        Route::get('/user', [UserController::class, 'index'])->name('master.user.index');
+        Route::post('/user', [UserController::class, 'store'])->name('master.user.create');
+    });
 });
 
 Route::get('/patient/{nik}', [PatientController::class, 'show'])->name('patient.show');
