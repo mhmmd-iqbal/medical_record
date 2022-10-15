@@ -29,13 +29,13 @@
                         <i class="fas  fa-th-large"></i>Master Data</a>
                     <ul class="navbar-mobile-sub__list list-unstyled js-sub-list" style="display:{{ (request()->is('master*')) ? 'block' : 'none' }}">
                         <li class="{{ (request()->is('master/user*')) ? 'active' : '' }}">
-                            <a href="{{route('user.index')}}">Data User</a>
+                            <a href="">Data User</a>
                         </li>
                         <li class="{{ (request()->is('master/category*')) ? 'active' : '' }}">
-                            <a href="{{route('category.index')}}">Data Kategori Produk</a>
+                            <a href="">Data Kategori Produk</a>
                         </li>
                         <li class="{{ (request()->is('master/product*')) ? 'active' : '' }}">
-                            <a href="{{route('product.index')}} ">Data Produk</a>
+                            <a href=" ">Data Produk</a>
                         </li>
                         
                     </ul>

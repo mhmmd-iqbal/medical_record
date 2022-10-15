@@ -276,7 +276,7 @@ section {
 .page-wrapper {
     overflow: hidden;
     background: #e5e5e5;
-    padding-bottom: 8vh;
+    /* padding-bottom: 8vh; */
 }
 
 @media (max-width: 991px) {
@@ -318,6 +318,7 @@ section {
 .main-content {
     padding-top: 116px;
     min-height: 100vh;
+    /* height: 100vh; */
 }
 
 @media (max-width: 991px) {
