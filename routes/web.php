@@ -45,7 +45,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/queue/poliklinik/{id}/count', [QueueController::class, 'countQueue'])->name('queue.poliklinik.count');
     Route::get('/medicine-list/medical/{id}', [MedicineListController::class, 'getListByMedicalRecord'])->name('medicine.list.medical');
     Route::post('/medical-list/medical/{id}', [MedicineListController::class, 'approveMedicine'])->name('medicine.list.approve');
-
+    Route::get('/medical-record/{id}', [PatientController::class, 'getMedicalRecord'])->name('medical-record.show');
+    
     Route::get('/stock', [StockController::class, 'index'] )->name('stock.index');
     Route::post('/stock', [StockController::class, 'store'] )->name('stock.create');
     Route::post('/stock/{id}', [StockController::class, 'update'] )->name('stock.update');
