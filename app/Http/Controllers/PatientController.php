@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Patient;
 use App\Models\Queue;
+use App\Models\MedicalRecord;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
@@ -54,5 +55,11 @@ class PatientController extends Controller
                 $res, $queue_count, $medical_issue
             ]
         ], 200);
+    }
+
+    public function getMedicalRecord($id)
+    {
+        $medicalRecord = MedicalRecord::where('patient_id', $id)->with('medicineLists')->get();
+        return response()->json($medicalRecord);
     }
 }

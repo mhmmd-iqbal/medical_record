@@ -26,5 +26,6 @@ Route::middleware(['auth'])->group(function () {
 });
 
 Route::get('/patient/{nik}', [PatientController::class, 'show'])->name('patient.show');
+Route::get('/medical-record/{id}', [PatientController::class, 'getMedicalRecord'])->name('medical-record.show');
 Route::post('/patient', [PatientController::class, 'store'])->name('patient.store');
 Route::get('/queue/poliklinik/{id}/count', [QueueController::class, 'countQueue'])->name('queue.poliklinik.count');

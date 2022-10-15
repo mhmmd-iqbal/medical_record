@@ -1,5 +1,5 @@
 @extends('partials.master')
-@section('title', 'DASHBOARD')
+@section('title', 'DAFTAR PASIEN')
 
 @section('custom_styles')
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
@@ -8,31 +8,117 @@
 @section('custom_scripts')
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script>
-        function patientRegister() {
-            $('#queueModal').modal('toggle')
+        const patientDetail = (e) => {
+            let idPatient = $(e).data().value
+            $('#medicalRecordModal').modal('toggle')
+            getMedicalRecord(idPatient)
         }
 
-        function checkNIK() {
-            let nik = $('input[name=nik]').val()
-            let url = "{{ route('patient.show', ':nik') }}".replace(':nik', nik)
+        function getMedicalRecord(id) {
+            let url = "{{ route('medical-record.show', ':id') }}".replace(':id', id)
+            ajaxRequest('GET', url).then(res => {
+                let data = res
+                renderView(res)
+                resetForm()
+            }).catch(err => {
 
-            ajaxRequest('GET', url).then((result) => {
-                if (result.data) {
-                    notification('success', 'Data Pasien Ditemukan!')
-                    $('input[name=name]').attr('readonly', true);
-                    $('input[name=date_of_birth]').attr('readonly', true);
-                    $('input[name=phone]').attr('readonly', true);
-                    $('input[name=gender]').attr('disabled', true);
+            })
+        }
+
+        function renderView(data) {
+            var content = ''
+            var subContent = ''
+            data.forEach((element, index) => {
+                if (element.medicine_lists == null) {
+                    element.medicine_lists.forEach((elementMR, indexMR) => {
+                        subContent += `
+                    <tr>
+                        <td>${indexMR + 1}</td>
+                        <td>${elementMR.stocks_id}</td>
+                        <td>${elementMR.quantity}</td>
+                        <td>${elementMR.created_at}</td>
+                    </tr>
+                    `
+                    });
                 } else {
-                    notification('warning', 'Data Pasien Tidak Ditemukan!')
-                    $('input[name=name]').attr('readonly', false);
-                    $('input[name=date_of_birth]').attr('readonly', false);
-                    $('input[name=phone]').attr('readonly', false);
-                    $('input[name=gender]').attr('disabled', false);
+                    subContent = `
+                    <tr>
+                        <td colspan="4" class="text-center">Data kosong</td>
+                    </tr>
+                    `
                 }
-            }).catch((err) => {
+                content += `
+                <button class="btn text-left" data-toggle="collapse"
+                    data-target="#collapseChild${index + 1}" aria-expanded="true"
+                    aria-controls="collapseChild${index + 1}">
+                    <div class="card-header" id="headingOne${index + 1}">
+                        <h5 class="text-light font-weight-bold mb-0">
+                            ${index + 1}
+                        </h5>
+                    </div>
+                </button>
 
+                <div id="collapseChild${index + 1}" class="collapse" aria-labelledby="headingOne${index + 1}"
+                    data-parent="#accordion">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-12">
+                                <h3>Riwayat Penyakit</h3>
+                            </div>
+                            <div class="col-12">
+                                <div class="table-responsive pt-2">
+                                    <table class="table table-bordered table-active">
+                                        <thead>
+                                            <tr>
+                                                <th>No</th>
+                                                <th>Keluhan</th>
+                                                <th>Penanganan</th>
+                                                <th>Ditangani Pada</th>
+                                                <th>Ditangani Sampai</th>
+                                            </tr>
+                                        </thead>
+                                        <tbod>
+                                            <tr>
+                                                <td>1</td>
+                                                <td>${element.medical_issue != null ? element.medical_issue : '-'}</td>
+                                                <td>${element.medical_handle != null ? element.medical_handle : '-'}</td>
+                                                <td>${element.treated_at != null ? element.treated_at : '-'}</td>
+                                                <td>${element.treated_to != null ? element.treated_to : '-'}</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mt-3">
+                            <div class="col-12">
+                                <h3>Riwayat Obat</h3>
+                            </div>
+                            <div class="col-12">
+                                <div class="table-responsive pt-2">
+                                    <table class="table table-bordered table-active">
+                                        <thead>
+                                            <tr>
+                                                <th>No</th>
+                                                <th>Nama Obat</th>
+                                                <th>Jumlah</th>
+                                                <th>Ditebus Pada</th>
+                                            </tr>
+                                        </thead>
+                                        <tbod>
+                                            ${subContent}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                `
             });
+            console.log(content, subContent);
+
+            $('#medicalRecordList').html(content);
         }
 
         function submitQueue() {
@@ -57,14 +143,24 @@
                 }
 
                 ajaxRequest('POST', url, data).then((result) => {
-                    resetForm()
+                    let url = "{{ route('queue.poliklinik.count', ':id') }}".replace(':id', poliklinik_id)
+
+                    ajaxRequest('GET', url).then(res => {
+                        let count = res.result
+                        let test = $(`#queue-poliklinik-${poliklinik_id}`).html(String(count).padStart(2,
+                            '0'))
+                        toastr.success(`Antrian telah diinput!`)
+                        resetForm()
+                    }).catch(err => {
+
+                    })
+
                 }).catch((err) => {
 
                 });
             } else {
-                alert('Input tidak boleh kosong!')
+                toastr.error(`Input tidak boleh kosong!`)
             }
-
         }
 
         function resetForm() {
@@ -72,7 +168,7 @@
             $('input[name=name]').val('')
             $('input[name=date_of_birth]').val('')
             $('input[name=phone]').val('')
-            $('input[name=gender]').val('')
+            $('input[name=gender]').prop('checked', false)
             $('textarea[name=medical_issue]').val('')
             $('select[name=poliklinik_id]').val('')
 
@@ -81,8 +177,49 @@
             $('input[name=phone]').attr('readonly', true);
             $('input[name=gender]').attr('disabled', true);
 
-            $('#queueModal').modal('toggle')
+            $('#queue-no').html(String(0).padStart(2, '0'))
+            $('#medicalRecordModal').modal('toggle')
         }
+
+        const listData = $('#list-datatables').DataTable({
+            processing: true,
+            serverSide: true,
+            searching: true,
+            fixedColumns: {
+                heightMatch: 'none'
+            },
+            ajax: {
+                url: '',
+                data: (req) => {
+
+                }
+            },
+            columns: [{
+                    data: 'DT_RowIndex',
+                    name: 'DT_RowIndex'
+                },
+                {
+                    data: 'patient.name',
+                    name: 'name'
+                },
+                {
+                    data: 'gender',
+                    name: 'gender'
+                },
+                {
+                    data: 'medical_issue',
+                    name: 'medical_issue'
+                },
+                {
+                    data: 'createdAt',
+                    name: 'createdAt'
+                },
+                {
+                    data: 'action',
+                    name: 'action'
+                },
+            ]
+        })
     </script>
 @endsection
 
@@ -91,53 +228,29 @@
     <div class="main-content">
         <div class="section__content section__content--p30">
             <div class="container-fluid">
-                <div class="row m-t-25">
+                <div class="row">
                     <div class="col-12">
                         <div class="card">
                             <div class="card-header">
-                                <h5 class="title text-right" style="color: white">Rabu, 13 Oktober 2022 | 14:00 WIB</h5>
+                                <h4 class="text-uppercase">
+                                    Daftar Pasien
+                                </h4>
                             </div>
                             <div class="card-body">
-                                <div class="row">
-                                    <div class="col-12 text-center">
-                                        <h3>DAFTAR ANTRIAN KLINIK KONOHA</h3>
-                                    </div>
+                                <div class="table-responsive pt-2">
+                                    <table class="table table-bordered table-active" id="list-datatables">
+                                        <thead>
+                                            <tr>
+                                                <th>No</th>
+                                                <th>Nama</th>
+                                                <th>Jenis Kelamin</th>
+                                                <th>Keluhan</th>
+                                                <th>Terdaftar Pada</th>
+                                                <th>Aksi</th>
+                                            </tr>
+                                        </thead>
+                                    </table>
                                 </div>
-                                <div class="row mt-5">
-                                    <div class="col-4">
-                                        <div class="au-card m-b-30">
-                                            <div class="au-card-inner text-center">
-                                                <h4>POLIKLINIK UMUM</h4>
-                                                <h3>01</h3>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-4">
-                                        <div class="au-card m-b-30">
-                                            <div class="au-card-inner text-center">
-                                                <h4>POLIKLINIK GIGI</h4>
-                                                <h3>01</h3>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-4">
-                                        <div class="au-card m-b-30">
-                                            <div class="au-card-inner text-center">
-                                                <h4>POLIKLINIK BERSALIN</h4>
-                                                <h3>01</h3>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row mt-5">
-                                    <div class="col-12 text-right">
-                                        <button class="btn btn-success" onclick="javascript:patientRegister()"> Daftarkan
-                                            Peserta </button>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="card-footer text-center">
-                                {{ date('Y') }} @ Konoha Hospitally
                             </div>
                         </div>
                     </div>
@@ -149,80 +262,38 @@
 @endsection
 
 @section('modal')
-    <div class="modal fade" id="queueModal" tabindex="-1" role="dialog" aria-labelledby="queueModalLabel"
+    <div class="modal fade" id="medicalRecordModal" tabindex="-1" role="dialog" aria-labelledby="medicalRecordModalLabel"
         aria-hidden="true" data-backdrop="static">
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="queueModalLabel">Pendaftaran Peserta</h5>
+                    <h5 class="modal-title" id="medicalRecordModalLabel">Riwayat Penanganan dan Resep</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
                 <div class="modal-body">
                     <div class="card-body card-block">
-                        <div class="row form-group">
-                            <div class="col col-md-3">
-                                <label for="text-input" class=" form-control-label">NIK</label>
-                            </div>
-                            <div class="col-12 col-md-9">
-                                <div class="input-group">
-                                    <input type="text" id="text-input" name="nik" placeholder=""
-                                        class="form-control">
-                                    <div class="input-group-btn">
-                                        <button onclick="javascript:checkNIK()" class="btn btn-success">
-                                            <i class="fa fa-search"></i> Check
-                                        </button>
+                        <div id="accordionMedicalRecord">
+                            <div class="card">
+                                <button class="btn text-left" data-toggle="collapse" data-target="#collapseOne"
+                                    aria-expanded="true" aria-controls="collapseOne">
+                                    <div class="card-header" id="headingOne">
+                                        <h5 class="mb-0 text-light font-weight-bold">
+                                            Riwayat Penyakit dan Resep
+                                        </h5>
                                     </div>
-                                </div>
-                            </div>
-                        </div>
+                                </button>
 
-                        <div class="row form-group">
-                            <div class="col col-md-3">
-                                <label for="" class=" form-control-label">Nama</label>
-                            </div>
-                            <div class="col-12 col-md-9">
-                                <input type="text" readonly id="" name="name" placeholder=""
-                                    class="form-control">
-                            </div>
-                        </div>
+                                <div id="collapseOne" class="collapse" aria-labelledby="headingOne"
+                                    data-parent="#accordionMedicalRecord">
+                                    <div class="card-body">
+                                        <div id="accordion">
+                                            <div class="card" id="medicalRecordList">
 
-                        <div class="row form-group">
-                            <div class="col col-md-3">
-                                <label for="" class=" form-control-label">Tanggal Lahir</label>
-                            </div>
-                            <div class="col-12 col-md-9">
-                                <input type="date" readonly id="" name="date_of_birth" placeholder=""
-                                    class="form-control">
-                            </div>
-                        </div>
-
-                        <div class="row form-group">
-                            <div class="col col-md-3">
-                                <label for="" class=" form-control-label">No HP</label>
-                            </div>
-                            <div class="col-12 col-md-9">
-                                <input type="text" readonly id="" name="phone" placeholder=""
-                                    class="form-control">
-                            </div>
-                        </div>
-
-                        <div class="row form-group">
-                            <div class="col col-md-3">
-                                <label class=" form-control-label">Jenis Kelamin</label>
-                            </div>
-                            <div class="col col-md-9">
-                                <div class="form-check-inline form-check">
-                                    <label for="inline-radio1" class="form-check-label mr-2">
-                                        <input type="radio" disabled id="inline-radio1" name="gender" value="male"
-                                            class="form-check-input">Pria
-                                    </label>
-
-                                    <label for="inline-radio3" class="form-check-label mr-2">
-                                        <input type="radio" disabled id="inline-radio3" name="gender" value="female"
-                                            class="form-check-input">Wanita
-                                    </label>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -238,25 +309,10 @@
 
                         <div class="row form-group">
                             <div class="col col-md-3">
-                                <label for="select" class="form-control-label">Poliklinik</label>
-                            </div>
-                            <div class="col-12 col-md-9">
-                                <select name="poliklinik_id" id="select" class="form-control">
-                                    <option value="" selected disabled>-- Pilih Poliklinik --</option>
-                                    @foreach ($poliklinik as $item)
-                                        <option value="{{ $item->id }}"> {{ $item->code }} - {{ $item->name }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                            </div>
-                        </div>
-
-                        <div class="row form-group">
-                            <div class="col col-md-3">
                                 <label class=" form-control-label">Nomer Antrian</label>
                             </div>
                             <div class="col-12 col-md-9">
-                                <b class="form-control-static">00</b>
+                                <b class="form-control-static" id="queue-no">00</b>
                             </div>
                         </div>
 
