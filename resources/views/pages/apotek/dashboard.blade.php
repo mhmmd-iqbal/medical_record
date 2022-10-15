@@ -7,9 +7,6 @@
 
 @section('custom_scripts')
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-<<<<<<< HEAD
-    <script></script>
-=======
     <script>
 
         const monthNames = ["January", "February", "March", "April", "May", "June",
@@ -104,7 +101,6 @@
             $('#formModal').modal('toggle')
         }
     </script>
->>>>>>> 9d9754f6a720163ab52e4482eebda19b9c750ff3
 @endsection
 
 @section('content')
@@ -116,13 +112,6 @@
                     <div class="col-12">
                         <div class="card">
                             <div class="card-header">
-<<<<<<< HEAD
-                                <h5 class="title text-right" style="color: white">Rabu, 13 Oktober 2022 | 14:00 WIB</h5>
-                            </div>
-
-                            <div class="card-footer text-center">
-                                {{ date('Y') }} @ Konoha Hospitally
-=======
                                 <h5 class="title text-right" style="color: white" id="time">-: -:-:-</h5>
                             </div>
                             <div class="card-body">
@@ -175,7 +164,6 @@
                             </div>
                             <div class="card-footer text-center">
                                 {{date('Y')}} @ Konoha Hospitally
->>>>>>> 9d9754f6a720163ab52e4482eebda19b9c750ff3
                             </div>
                         </div>
                     </div>
@@ -185,8 +173,6 @@
     </div>
     <!-- END MAIN CONTENT-->
 @endsection
-<<<<<<< HEAD
-=======
 
 @section('modal')
 <div class="modal fade" id="formModal" tabindex="-1" role="dialog" aria-labelledby="formModalLabel" aria-hidden="true"
@@ -224,4 +210,3 @@ data-backdrop="static">
 @endsection
 
 {{-- $('input[type=checkbox]').is(':checked') --}}
->>>>>>> 9d9754f6a720163ab52e4482eebda19b9c750ff3
