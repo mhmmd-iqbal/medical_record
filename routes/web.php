@@ -34,6 +34,8 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/poliklinik', [PoliklinikController::class, 'index'])->name('master.poliklinik.index');
         Route::post('/poliklinik', [PoliklinikController::class, 'store'])->name('master.poliklinik.create');
         Route::post('/check-poliklinik', [PoliklinikController::class, 'checkCode'])->name('master.poliklinik.check');
+
+        Route::get('/patient', [PatientController::class, 'index'])->name('master.patient.index');
     });
 });
 

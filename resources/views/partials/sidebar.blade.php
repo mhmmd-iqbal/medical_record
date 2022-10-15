@@ -85,6 +85,7 @@
                     <a href="{{route('dashboard')}} ">
                         <i class="fas fa-hospital-o"></i>Rekam Medis</a>
                 </li>
+                @can('isAdmin')
                 <li class="has-sub {{ (request()->is('master')) ? 'active' : '' }}">
                     <a class="js-arrow" href="#">
                         <i class="fas  fa-th-large"></i>Master Data</a>
@@ -95,12 +96,13 @@
                         <li class="{{ (request()->is('master/poliklinik*')) ? 'active' : '' }}">
                             <a href="{{route('master.poliklinik.index')}}">Data Poliklinik</a>
                         </li>
-                        <li class="{{ (request()->is('master/category*')) ? 'active' : '' }}">
-                            <a href="">Data Pasien</a>
+                        <li class="{{ (request()->is('master/patient*')) ? 'active' : '' }}">
+                            <a href="{{route('master.patient.index')}}">Data Pasien</a>
                         </li>
                         
                     </ul>
                 </li>
+                @endcan
                 
                 <li class="{{ (request()->is('sell*')) ? 'active' : '' }}">
                     <a href="" class="">
@@ -110,14 +112,10 @@
                     <a href="" class="">
                         <i class="fas fa-bar-chart-o"></i>laporan</a>
                 </li>
-                @can('isAdmin')
-                @endcan
-                @canany(['isAdmin', 'isCasheer'])
+                
+                @canany(['isAdmin'])
                 
                 @endcanany
-                @can('isAdmin')
-                
-                @endcan
                 <li class="{{ (request()->is('about')) ? 'active' : '' }}">
                     <a href="#" onclick="logout()">
                         <i class="fas fa-power-off"></i>Log Out</a>
