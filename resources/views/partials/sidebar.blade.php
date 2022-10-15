@@ -77,8 +77,8 @@
                     <a href="{{route('dashboard')}} ">
                         <i class="fas fa-tachometer-alt"></i>Dashboard</a>
                     </li>
-                <li>    
-                    <a href="{{route('dashboard')}} ">
+                <li class="{{ (request()->is('queue')) ? 'active' : '' }}">    
+                    <a href="{{route('queue.index')}} ">
                         <i class="fas fa-user"></i>List Antrian</a>
                 </li>
                 <li>    

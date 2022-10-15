@@ -49,5 +49,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/stock', [StockController::class, 'index'] )->name('stock.index');
     Route::post('/stock', [StockController::class, 'store'] )->name('stock.create');
     Route::post('/stock/{id}', [StockController::class, 'update'] )->name('stock.update');
+
+    Route::get('/queue', [QueueController::class, 'index'])->name('queue.index');
 });
 
