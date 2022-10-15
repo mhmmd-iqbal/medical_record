@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PatientController;
+use App\Http\Controllers\PoliklinikController;
 use App\Http\Controllers\QueueController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -28,6 +29,11 @@ Route::middleware(['auth'])->group(function () {
     Route::group(['prefix' => 'master'], function(){
         Route::get('/user', [UserController::class, 'index'])->name('master.user.index');
         Route::post('/user', [UserController::class, 'store'])->name('master.user.create');
+        Route::post('/check-user', [UserController::class, 'checkUsername'])->name('master.user.check');
+
+        Route::get('/poliklinik', [PoliklinikController::class, 'index'])->name('master.poliklinik.index');
+        Route::post('/poliklinik', [PoliklinikController::class, 'store'])->name('master.poliklinik.create');
+        Route::post('/check-poliklinik', [PoliklinikController::class, 'checkCode'])->name('master.poliklinik.check');
     });
 });
 

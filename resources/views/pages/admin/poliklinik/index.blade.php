@@ -14,18 +14,16 @@
 
     function submitForm()
     {
-        let username    = $('input[name=username]').val()
+        let code        = $('input[name=code]').val()
+        let user_id     = $('select[name=user_id]').val()
         let name        = $('input[name=name]').val()
-        let auth_level  = $('select[name=auth_level]').val()
-        let password    = $('input[name=password]').val()
 
-        if(username && name && auth_level && password) {
-            let url     = "{{route('master.user.check')}}"
+        if(code && user_id && name) {
+            let url     = "{{route('master.poliklinik.check')}}"
             let data    = {
-                username: username,
-                name: name,
-                auth_level: auth_level,
-                password: password
+                code: code,
+                user_id: user_id,
+                name: name
             }
             ajaxRequest('POST', url, data).then((result) => {
                 $('#input-form').trigger('submit')
@@ -40,10 +38,9 @@
     }
 
     function resetForm() {
-        $('input[name=username]').val('')
         $('input[name=name]').val('')
-        $('input[name=password]').val('')
-        $('select[name=auth_level]').val('')
+        $('input[name=code]').val('')
+        $('select[name=user_id]').val('')
         $('#formModal').modal('toggle')
     }
 </script>
@@ -59,7 +56,7 @@
                         <div class="card">
                             <div class="card-header">
                                 <h4 class="text-uppercase">
-                                    User
+                                    Klinik
                                 </h4>
                             </div>
                             <div class="card-body">
@@ -75,18 +72,18 @@
                                         <thead>
                                             <tr>
                                                 <th>No</th>
-                                                <th>Nama</th>
-                                                <th>Username</th>
-                                                <th>Level</th>
+                                                <th>Kode Klinik</th>
+                                                <th>Nama Klinik</th>
+                                                <th>Nama Petugas</th>
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            @foreach ($user as $i => $item)
+                                            @foreach ($poliklinik as $i => $item)
                                                 <tr>
                                                     <td>{{$loop->iteration}}</td>
+                                                    <td>{{$item->code}}</td>
                                                     <td>{{$item->name}}</td>
-                                                    <td>{{$item->username}}</td>
-                                                    <td>{{$item->auth_level}}</td>
+                                                    <td>{{$item->user->name}}</td>
                                                 </tr>
                                             @endforeach
                                         </tbody>
@@ -108,7 +105,7 @@ data-backdrop="static">
    <div class="modal-dialog" role="document">
        <div class="modal-content">
            <div class="modal-header">
-               <h5 class="modal-title" id="formModalLabel">Tambah Data User</h5>
+               <h5 class="modal-title" id="formModalLabel">Tambah Data Klinik</h5>
                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                    <span aria-hidden="true">&times;</span>
                </button>
@@ -119,41 +116,32 @@ data-backdrop="static">
                         @csrf
                         <div class="row form-group">
                             <div class="col col-md-3">
-                                <label for="" class=" form-control-label">Username</label>
+                                <label for="" class=" form-control-label">Kode</label>
                             </div>
                             <div class="col-12 col-md-9">
-                                <input type="text" id="" name="username" placeholder="" class="form-control">
+                                <input type="text" id="" name="code" placeholder="" class="form-control">
                             </div>
                         </div>
 
                         <div class="row form-group">
                             <div class="col col-md-3">
-                                <label for="" class=" form-control-label">Name</label>
+                                <label for="" class=" form-control-label">Klinik</label>
                             </div>
                             <div class="col-12 col-md-9">
                                 <input type="text" id="" name="name" placeholder="" class="form-control">
                             </div>
                         </div>
-    
+                            
                         <div class="row form-group">
                             <div class="col col-md-3">
-                                <label for=""  class=" form-control-label">Password</label>
+                                <label for="select" class="form-control-label">Petugas</label>
                             </div>
                             <div class="col-12 col-md-9">
-                                <input type="password" id="" name="password" placeholder="" class="form-control">
-                            </div>
-                        </div>
-                        
-                        <div class="row form-group">
-                            <div class="col col-md-3">
-                                <label for="select" class="form-control-label">Level</label>
-                            </div>
-                            <div class="col-12 col-md-9">
-                                <select name="auth_level" id="select" class="form-control">
-                                    <option value="" selected disabled >-- Pilih Level --</option>
-                                    <option value="admin" >Admin</option>
-                                    <option value="poliklinik" >Poliklinik</option>
-                                    <option value="apoteker" >Apoteker</option>
+                                <select name="user_id" id="select" class="form-control">
+                                    <option value="" selected disabled >-- Pilih Dokter --</option>
+                                    @foreach ($user as $item)
+                                        <option value="{{$item->id}}">{{$item->name}} </option>
+                                    @endforeach
                                 </select>
                             </div>
                         </div>

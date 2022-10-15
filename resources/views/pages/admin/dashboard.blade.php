@@ -95,7 +95,6 @@
                     ajaxRequest('GET', url).then(res => {
                         let count = res.result
                         let test = $(`#queue-poliklinik-${poliklinik_id}`).html(String(count).padStart(2, '0'))    
-                        console.log(test)
                         toastr.success(`Antrian telah diinput!`)
                         resetForm()
                     }).catch(err => {

@@ -2,14 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\UserRequest;
-use App\Models\Role;
 use App\Models\User;
-use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
-use Yajra\DataTables\Facades\DataTables;
-
 class UserController extends Controller
 {
     public function index(Request $request)
@@ -20,16 +15,32 @@ class UserController extends Controller
 
     public function store(Request $request)
     {
-        $username = $request->input('username');
-        $password = Hash::make($request->input('password'));
+        $username   = $request->input('username');
+        $name       = $request->input('name');
+        $password   = Hash::make($request->input('password'));
         $auth_level = $request->input('auth_level');
 
         User::create([
             'username'      => $username,
+            'name'          => $name,
             'password'      => $password,
             'auth_level'    => $auth_level
         ]);
 
         return redirect()->back();
+    }
+
+    public function checkUsername(Request $request)
+    {
+        $username = $request->input('username');
+        $find     = User::where('username', $username)->count();
+        if($find > 0) {
+            return response()->json([
+                'message'   => 'Duplicate Username'
+            ], 400);
+        }
+        return response()->json([
+            'message'   => 'Username is ready'
+        ], 200);
     }
 }

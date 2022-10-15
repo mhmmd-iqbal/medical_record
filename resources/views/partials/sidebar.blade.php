@@ -92,8 +92,8 @@
                         <li class="{{ (request()->is('master/user*')) ? 'active' : '' }}">
                             <a href="{{route("master.user.index")}}">Data User</a>
                         </li>
-                        <li class="{{ (request()->is('master/category*')) ? 'active' : '' }}">
-                            <a href="">Data Poliklinik</a>
+                        <li class="{{ (request()->is('master/poliklinik*')) ? 'active' : '' }}">
+                            <a href="{{route('master.poliklinik.index')}}">Data Poliklinik</a>
                         </li>
                         <li class="{{ (request()->is('master/category*')) ? 'active' : '' }}">
                             <a href="">Data Pasien</a>
