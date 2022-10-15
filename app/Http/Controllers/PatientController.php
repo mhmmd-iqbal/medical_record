@@ -9,15 +9,13 @@ use Illuminate\Http\Request;
 
 class PatientController extends Controller
 {
-    public function show(Request $request)
+    public function show($nik)
     {
-        $nik = $request->input('nik');
-
         $patient = Patient::where('nik', $nik)->first();
 
         return response()->json([
             'message'   => 'ok',
-            'result'    => $patient
+            'result'    => $patient,
         ], 200);
     }
 
@@ -44,14 +42,17 @@ class PatientController extends Controller
                         ->whereDate('created_at', Carbon::today())
                         ->count();
 
-        $patient->medicalRecords()->create([
+        $res = $patient->queues()->create([
             'poliklinik_id' => $poliklinik_id,
             'medical_issue' => $medical_issue,
-            'queue_no'      => $queue_count++
+            'queue_no'      => (int) $queue_count + 1
         ]);
 
         return response()->json([
             'message'   => 'ok',
+            'check'     => [
+                $res, $queue_count, $medical_issue
+            ]
         ], 200);
     }
 }

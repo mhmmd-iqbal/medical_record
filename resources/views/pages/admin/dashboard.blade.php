@@ -8,7 +8,6 @@
 @section('custom_scripts')
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script>
-
         function patientRegister()
         {
             $('#queueModal').modal('toggle')
@@ -19,13 +18,18 @@
             let nik = $('input[name=nik]').val()
             let url = "{{route('patient.show', ':nik' )}}".replace(':nik', nik)
 
-            ajaxRequest('GET', url).then((result) => {
-                if (result.data) {
+            ajaxRequest('GET', url).then((res) => {
+                if (res.result) {
                     notification('success', 'Data Pasien Ditemukan!')
-                    $('input[name=name]').attr('readonly', true);
-                    $('input[name=date_of_birth]').attr('readonly', true);
-                    $('input[name=phone]').attr('readonly', true);
-                    $('input[name=gender]').attr('disabled', true);
+                    $('input[name=name]').attr('readonly', true).val(res.result.name);
+                    $('input[name=date_of_birth]').attr('readonly', true).val(res.result.date_of_birth);
+                    $('input[name=phone]').attr('readonly', true).val(res.result.phone);
+                    $('input[name=gender]').attr('disabled', false);
+                    if(res.result.gender === 'male') {
+                        $('input[name=gender][value=male]').prop('checked', true);
+                    } else {
+                        $('input[name=gender][value=female]').prop('checked', true);
+                    }
                 } else {
                     notification('warning', 'Data Pasien Tidak Ditemukan!')
                     $('input[name=name]').attr('readonly', false);
@@ -54,18 +58,30 @@
                         nik: nik,
                         name: name,
                         phone: phone,
+                        gender:gender,
                         date_of_birth: date_of_birth,
                         medical_issue: medical_issue,
                         poliklinik_id: poliklinik_id
                     }
 
                 ajaxRequest('POST', url, data).then((result) => {
-                    resetForm()
+                    let url = "{{route('queue.poliklinik.count', ":id")}}".replace(':id', poliklinik_id)
+
+                    ajaxRequest('GET', url).then(res => {
+                        let count = res.result
+                        let test = $(`#queue-poliklinik-${poliklinik_id}`).html(String(count).padStart(2, '0'))    
+                        console.log(test)
+                        toastr.success(`Antrian telah diinput!`)
+                        resetForm()
+                    }).catch(err => {
+
+                    })
+
                 }).catch((err) => {
                     
                 });
             } else {
-                alert('Input tidak boleh kosong!')
+                toastr.error(`Input tidak boleh kosong!`)
             }
 
         }
@@ -76,7 +92,7 @@
             $('input[name=name]').val('')
             $('input[name=date_of_birth]').val('')
             $('input[name=phone]').val('')
-            $('input[name=gender]').val('')
+            $('input[name=gender]').prop('checked', false)
             $('textarea[name=medical_issue]').val('')
             $('select[name=poliklinik_id]').val('')
 
@@ -85,7 +101,20 @@
             $('input[name=phone]').attr('readonly', true);
             $('input[name=gender]').attr('disabled', true);
 
+            $('#queue-no').html(String(0).padStart(2, '0'))
             $('#queueModal').modal('toggle')
+        }
+
+        function checkPoliQueue()
+        {
+            let id  = $('select[name=poliklinik_id]').val()
+            let url = "{{route('queue.poliklinik.count', ":id")}}".replace(':id', id)
+            ajaxRequest('GET', url).then(res => {
+                let next_count = res.result + 1
+                $('#queue-no').html(String(next_count).padStart(2, '0'))
+            }).catch(err => {
+
+            })
         }
 
     </script>
@@ -108,32 +137,19 @@
                                         <h3>DAFTAR ANTRIAN KLINIK KONOHA</h3>
                                     </div>
                                 </div>
-                                <div class="row mt-5">
+                                <div class="row mt-5" id="poliklinik-list">
+                                    @foreach ($poliklinik as $item)
                                     <div class="col-4">
                                         <div class="au-card m-b-30">
                                             <div class="au-card-inner text-center">
-                                                <h4>POLIKLINIK UMUM</h4>
-                                                <h3>01</h3>
+                                                <h4>{{$item->name}}</h4>
+                                                <h3 id="queue-poliklinik-{{$item->id}}">{{str_pad ($item->queues_count, 2, "0", STR_PAD_LEFT) }}</h3>
                                             </div>
                                         </div>
-                                    </div>        
-                                    <div class="col-4">
-                                        <div class="au-card m-b-30">
-                                            <div class="au-card-inner text-center">
-                                                <h4>POLIKLINIK GIGI</h4>
-                                                <h3>01</h3>
-                                            </div>
-                                        </div>
-                                    </div>        
-                                    <div class="col-4">
-                                        <div class="au-card m-b-30">
-                                            <div class="au-card-inner text-center">
-                                                <h4>POLIKLINIK BERSALIN</h4>
-                                                <h3>01</h3>
-                                            </div>
-                                        </div>
-                                    </div>        
+                                    </div>
+                                    @endforeach
                                 </div>
+
                                 <div class="row mt-5">
                                     <div class="col-12 text-right">
                                         <button class="btn btn-success" onclick="javascript:patientRegister()"> Daftarkan Peserta </button>
@@ -239,7 +255,7 @@ data-backdrop="static">
                             <label for="select" class="form-control-label">Poliklinik</label>
                         </div>
                         <div class="col-12 col-md-9">
-                            <select name="poliklinik_id" id="select" class="form-control">
+                            <select name="poliklinik_id" onchange="javascript:checkPoliQueue()" id="select" class="form-control">
                                 <option value="" selected disabled >-- Pilih Poliklinik --</option>
                                 @foreach ($poliklinik as $item)
                                     <option value="{{$item->id}}" > {{$item->code}} - {{$item->name}} </option>
@@ -253,7 +269,7 @@ data-backdrop="static">
                             <label class=" form-control-label">Nomer Antrian</label>
                         </div>
                         <div class="col-12 col-md-9">
-                            <b class="form-control-static">00</b>
+                            <b class="form-control-static" id="queue-no">00</b>
                         </div>
                     </div>
 
