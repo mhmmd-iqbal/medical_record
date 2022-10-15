@@ -19,7 +19,7 @@
     <nav class="navbar-mobile">
         <div class="container-fluid">
             <ul class="navbar-mobile__list list-unstyled">
-                <li class="{{ (request()->is('/')) ? 'active' : '' }}">
+                <li class="{{ (request()->is('dashboard')) ? 'active' : '' }}">
                     <a href="{{route('dashboard')}} ">
                         <i class="fas fa-tachometer-alt"></i>Dashboard</a>
                 </li>
@@ -73,7 +73,7 @@
     <div class="menu-sidebar__content js-scrollbar1">
         <nav class="navbar-sidebar">
             <ul class="list-unstyled navbar__list">
-                <li class="{{ (request()->is('/')) ? 'active' : '' }}">
+                <li class="{{ (request()->is('dashboard')) ? 'active' : '' }}">
                     <a href="{{route('dashboard')}} ">
                         <i class="fas fa-tachometer-alt"></i>Dashboard</a>
                     </li>
@@ -85,7 +85,7 @@
                     <a href="{{route('dashboard')}} ">
                         <i class="fas fa-hospital-o"></i>Rekam Medis</a>
                 </li>
-                <li class="has-sub active">
+                <li class="has-sub {{ (request()->is('master')) ? 'active' : '' }}">
                     <a class="js-arrow" href="#">
                         <i class="fas  fa-th-large"></i>Master Data</a>
                     <ul class="navbar-mobile-sub__list list-unstyled js-sub-list" style="display:{{ (request()->is('master*')) ? 'block' : 'none' }}">
