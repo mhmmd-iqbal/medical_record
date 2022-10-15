@@ -19,7 +19,7 @@
     <nav class="navbar-mobile">
         <div class="container-fluid">
             <ul class="navbar-mobile__list list-unstyled">
-                <li class="{{ (request()->is('/')) ? 'active' : '' }}">
+                <li class="{{ (request()->is('dashboard')) ? 'active' : '' }}">
                     <a href="{{route('dashboard')}} ">
                         <i class="fas fa-tachometer-alt"></i>Dashboard</a>
                 </li>
@@ -29,7 +29,7 @@
                         <i class="fas  fa-th-large"></i>Master Data</a>
                     <ul class="navbar-mobile-sub__list list-unstyled js-sub-list" style="display:{{ (request()->is('master*')) ? 'block' : 'none' }}">
                         <li class="{{ (request()->is('master/user*')) ? 'active' : '' }}">
-                            <a href="">Data User</a>
+                            <a href="{{route("master.user.index")}}">Data User</a>
                         </li>
                         <li class="{{ (request()->is('master/category*')) ? 'active' : '' }}">
                             <a href="">Data Kategori Produk</a>
@@ -73,7 +73,7 @@
     <div class="menu-sidebar__content js-scrollbar1">
         <nav class="navbar-sidebar">
             <ul class="list-unstyled navbar__list">
-                <li class="{{ (request()->is('/')) ? 'active' : '' }}">
+                <li class="{{ (request()->is('dashboard')) ? 'active' : '' }}">
                     <a href="{{route('dashboard')}} ">
                         <i class="fas fa-tachometer-alt"></i>Dashboard</a>
                     </li>
@@ -85,39 +85,38 @@
                     <a href="{{route('dashboard')}} ">
                         <i class="fas fa-hospital-o"></i>Rekam Medis</a>
                 </li>
-                <li class="has-sub active">
+                @can('isAdmin')
+                <li class="has-sub {{ (request()->is('master')) ? 'active' : '' }}">
                     <a class="js-arrow" href="#">
                         <i class="fas  fa-th-large"></i>Master Data</a>
                     <ul class="navbar-mobile-sub__list list-unstyled js-sub-list" style="display:{{ (request()->is('master*')) ? 'block' : 'none' }}">
                         <li class="{{ (request()->is('master/user*')) ? 'active' : '' }}">
-                            <a href="">Data User</a>
+                            <a href="{{route("master.user.index")}}">Data User</a>
                         </li>
-                        <li class="{{ (request()->is('master/category*')) ? 'active' : '' }}">
-                            <a href="">Data Poliklinik</a>
+                        <li class="{{ (request()->is('master/poliklinik*')) ? 'active' : '' }}">
+                            <a href="{{route('master.poliklinik.index')}}">Data Poliklinik</a>
                         </li>
-                        <li class="{{ (request()->is('master/category*')) ? 'active' : '' }}">
-                            <a href="">Data Pasien</a>
+                        <li class="{{ (request()->is('master/patient*')) ? 'active' : '' }}">
+                            <a href="{{route('master.patient.index')}}">Data Pasien</a>
                         </li>
                         
                     </ul>
                 </li>
-                
-                <li class="{{ (request()->is('sell*')) ? 'active' : '' }}">
-                    <a href="" class="">
-                        <i class="fas fa-toggle-down"></i>Stock Barang</a>
-                </li>
-                <li class="{{ (request()->is('sell*')) ? 'active' : '' }}">
+
+                <li class="{{ (request()->is('report*')) ? 'active' : '' }}">
                     <a href="" class="">
                         <i class="fas fa-bar-chart-o"></i>laporan</a>
                 </li>
-                @can('isAdmin')
                 @endcan
-                @canany(['isAdmin', 'isCasheer'])
                 
+                
+                @canany(['isApotek'])
+                <li class="{{ (request()->is('stock*')) ? 'active' : '' }}">
+                    <a href="{{route('stock.index')}}" class="">
+                        <i class="fas fa-toggle-down"></i>Stock Barang</a>
+                </li>
                 @endcanany
-                @can('isAdmin')
                 
-                @endcan
                 <li class="{{ (request()->is('about')) ? 'active' : '' }}">
                     <a href="#" onclick="logout()">
                         <i class="fas fa-power-off"></i>Log Out</a>

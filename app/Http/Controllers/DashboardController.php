@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\MedicalRecord;
 use App\Models\Poliklinik;
 use App\Models\Queue;
 use Illuminate\Http\Request;
@@ -44,8 +45,11 @@ class DashboardController extends Controller
                 return view('pages.poliklinik.dashboard');
                 break;
             case 'apotek':
-                $poliklinik = Poliklinik::get();
-                return view('pages.apotek.dashboard', compact('poliklinik'));
+                $medical_record = MedicalRecord::where('status', false)
+                                ->with('medicineLists.stock', 'user.polikliniks', 'patient')
+                                ->get();
+                // return $medical_record;
+                return view('pages.apotek.dashboard', compact('medical_record'));
                 break;
             
         }

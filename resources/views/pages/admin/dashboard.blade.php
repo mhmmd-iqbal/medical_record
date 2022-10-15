@@ -8,6 +8,31 @@
 @section('custom_scripts')
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script>
+
+        const monthNames = ["January", "February", "March", "April", "May", "June",
+            "July", "August", "September", "October", "November", "December"
+        ];
+        
+        function time() {
+            let time = $('#time');
+            let d = new Date();
+
+            let month = d.toLocaleString('default', { month: 'long' });
+            let day = d.getUTCDate();
+            let year = d.getUTCFullYear();
+
+            newdate = year + "/" + month + "/" + day;
+            newdate = `${day} ${month} ${year}`
+
+            let s = d.getSeconds();
+            let m = d.getMinutes();
+            let h = d.getHours();
+            let show = ("0" + h).substr(-2) + ":" + ("0" + m).substr(-2) + ":" + ("0" + s).substr(-2);
+            time.html(newdate +' | '+show) 
+        }
+
+        setInterval(time, 1000);
+
         function patientRegister()
         {
             $('#queueModal').modal('toggle')
@@ -70,7 +95,6 @@
                     ajaxRequest('GET', url).then(res => {
                         let count = res.result
                         let test = $(`#queue-poliklinik-${poliklinik_id}`).html(String(count).padStart(2, '0'))    
-                        console.log(test)
                         toastr.success(`Antrian telah diinput!`)
                         resetForm()
                     }).catch(err => {
@@ -129,7 +153,7 @@
                     <div class="col-12">
                         <div class="card">
                             <div class="card-header">
-                                <h5 class="title text-right" style="color: white">Rabu, 13 Oktober 2022 | 14:00 WIB</h5>
+                                <h5 class="title text-right" style="color: white" id="time">-: -:-:-</h5>
                             </div>
                             <div class="card-body">
                                 <div class="row">

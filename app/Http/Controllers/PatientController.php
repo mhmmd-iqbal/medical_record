@@ -10,9 +10,17 @@ use Illuminate\Http\Request;
 
 class PatientController extends Controller
 {
+    public function index()
+    {
+        $patient = Patient::get();
+        return view('pages.admin.patient.index', compact('patient'));
+    }
+
     public function show($nik)
     {
-        $patient = Patient::where('nik', $nik)->first();
+        $patient = Patient::where('nik', $nik)
+                    ->with('medicalrecords.user')
+                    ->first();
 
         return response()->json([
             'message'   => 'ok',
