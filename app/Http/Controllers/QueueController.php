@@ -25,6 +25,12 @@ class QueueController extends Controller
         return $poliklinik;
     }
 
+    public function indexApi()
+    {
+        $queues = Queue::with('patient.medicalRecords', 'poliklinik')->get();
+        return $queues;
+    }
+
     public function countQueue($id) 
     {
         $count = Queue::where('poliklinik_id', $id)
