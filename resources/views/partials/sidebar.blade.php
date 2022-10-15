@@ -104,18 +104,18 @@
                 </li>
                 @endcan
                 
-                <li class="{{ (request()->is('sell*')) ? 'active' : '' }}">
+                
+                @canany(['isApotek'])
+                <li class="{{ (request()->is('stock*')) ? 'active' : '' }}">
                     <a href="" class="">
                         <i class="fas fa-toggle-down"></i>Stock Barang</a>
                 </li>
+                @endcanany
+                
                 <li class="{{ (request()->is('sell*')) ? 'active' : '' }}">
                     <a href="" class="">
                         <i class="fas fa-bar-chart-o"></i>laporan</a>
                 </li>
-                
-                @canany(['isAdmin'])
-                
-                @endcanany
                 <li class="{{ (request()->is('about')) ? 'active' : '' }}">
                     <a href="#" onclick="logout()">
                         <i class="fas fa-power-off"></i>Log Out</a>

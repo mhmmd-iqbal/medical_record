@@ -14,6 +14,7 @@ class MedicalRecord extends Model
     protected $fillable = [
         'patient_id',
         'user_id',
+        'status',
         'medical_issue',
         'medical_handle',
         'treated_at',
