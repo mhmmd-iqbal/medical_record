@@ -112,7 +112,7 @@
                 
                 @canany(['isApotek'])
                 <li class="{{ (request()->is('stock*')) ? 'active' : '' }}">
-                    <a href="" class="">
+                    <a href="{{route('stock.index')}}" class="">
                         <i class="fas fa-toggle-down"></i>Stock Barang</a>
                 </li>
                 @endcanany
