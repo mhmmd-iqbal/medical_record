@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\MedicalRecord;
 use App\Models\Poliklinik;
 use App\Models\Queue;
+use App\Models\Stock;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Yajra\DataTables\DataTables;
@@ -22,6 +23,7 @@ class DashboardController extends Controller
                 break;
             case 'poliklinik':
                 $poliklinik = Poliklinik::where('user_id', Auth::user()->id)->first();
+                $medicines = Stock::all();
                 $queues = $poliklinik->queues()->whereDate('created_at', now())->with('patient')->get();
                 if($request->ajax()){
                     return DataTables::of($queues)
@@ -31,7 +33,7 @@ class DashboardController extends Controller
                         })
                         ->addColumn('action', function ($data) {
                                 return
-                                '<button class="btn btn-success text-white "onclick="patientDetail(this)" data-value="'.$data->patient->id.'"><i class="fa fa-eye"></i></button>';
+                                '<button class="btn btn-success text-white "onclick="patientDetail(this)" data-value="'.$data->patient->id.' "data-medical_issue="'.$data->medical_issue.'"><i class="fa fa-eye"></i></button>';
                         })
                         ->addColumn('createdAt', function($data){
                             return Carbon::parse($data->created_at)->format('H : i : s');
@@ -42,7 +44,7 @@ class DashboardController extends Controller
                         ])
                         ->make(true);
                 }
-                return view('pages.poliklinik.dashboard');
+                return view('pages.poliklinik.dashboard', compact('medicines'));
                 break;
             case 'apotek':
                 $medical_record = MedicalRecord::where('status', false)

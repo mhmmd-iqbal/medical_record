@@ -8,8 +8,13 @@
 @section('custom_scripts')
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script>
+        let idPatient
+        let medicalIssue
         const patientDetail = (e) => {
-            let idPatient = $(e).data().value
+            idPatient = $(e).data().value
+            medicalIssue = $(e).data().medical_issue
+            console.log(medicalIssue)
+            $('#medical_issue').html(medicalIssue)
             $('#medicalRecordModal').modal('toggle')
             getMedicalRecord(idPatient)
         }
@@ -17,8 +22,8 @@
         function getMedicalRecord(id) {
             let url = "{{ route('medical-record.show', ':id') }}".replace(':id', id)
             ajaxRequest('GET', url).then(res => {
-                let data = res
-                renderView(res)
+                let data = res.result
+                renderView(data)
                 resetForm()
             }).catch(err => {
 
@@ -73,8 +78,9 @@
                                                 <th>No</th>
                                                 <th>Keluhan</th>
                                                 <th>Penanganan</th>
-                                                <th>Ditangani Pada</th>
-                                                <th>Ditangani Sampai</th>
+                                                <th>Dokter</th>
+                                                <th>Tanggal Dirawat</th>
+                                                <th>Tanggal Keluar</th>
                                             </tr>
                                         </thead>
                                         <tbod>
@@ -82,6 +88,7 @@
                                                 <td>1</td>
                                                 <td>${element.medical_issue != null ? element.medical_issue : '-'}</td>
                                                 <td>${element.medical_handle != null ? element.medical_handle : '-'}</td>
+                                                <td>${element.user.name != null ? element.user.name : '-'}</td>
                                                 <td>${element.treated_at != null ? element.treated_at : '-'}</td>
                                                 <td>${element.treated_to != null ? element.treated_to : '-'}</td>
                                             </tr>
@@ -116,9 +123,16 @@
                 </div>
                 `
             });
-            console.log(content, subContent);
 
             $('#medicalRecordList').html(content);
+        }
+
+        function addMedicine() {
+            let medicalHandle = $('input[name=medical_handle]').val()
+            let stockID = $('select[name=stock_id]').val()
+            let quantity = $('input[name=quantity]').val()
+
+
         }
 
         function submitQueue() {
@@ -300,22 +314,55 @@
 
                         <div class="row form-group">
                             <div class="col col-md-3">
-                                <label for="textarea-input" class=" form-control-label">Keluhan Awal</label>
+                                <label for="textarea-input" class=" form-control-label">Keluhan</label>
                             </div>
                             <div class="col-12 col-md-9">
-                                <textarea name="medical_issue" id="" rows="2" placeholder="Keluhan..." class="form-control"></textarea>
+                                <p id="medical_issue"></p>
                             </div>
                         </div>
 
                         <div class="row form-group">
                             <div class="col col-md-3">
-                                <label class=" form-control-label">Nomer Antrian</label>
+                                <label for="textarea-input" class=" form-control-label">Penanganan</label>
                             </div>
                             <div class="col-12 col-md-9">
-                                <b class="form-control-static" id="queue-no">00</b>
+                                <textarea name="medical_handle" id="" rows="2" placeholder="Penanganan..." class="form-control"></textarea>
                             </div>
                         </div>
 
+                        <div class="row form-group">
+                            <div class="col-6">
+                                <div class="row">
+                                    <div class="col col-md-3">
+                                        <label for="select" class="form-control-label">Obat</label>
+                                    </div>
+                                    <div class="col-12 col-md-9">
+                                        <select name="stock_id" id="select" class="form-control">
+                                            <option value="" selected disabled>-- Pilih Obat --</option>
+                                            @foreach ($medicines as $item)
+                                                <option value="{{ $item->id }}"> {{ $item->name }} -
+                                                    {{ $item->quantity }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-5">
+                                <div class="row">
+                                    <div class="col col-md-3">
+                                        <label for="" class=" form-control-label">Quantity</label>
+                                    </div>
+                                    <div class="col-12 col-md-9">
+                                        <input type="number" id="" name="quantity" placeholder=""
+                                            class="form-control">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-1">
+                                <button type="button" class="btn btn-success" onclick="javascript:addMedicine()">+</button>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div class="modal-footer">

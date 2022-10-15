@@ -9,6 +9,23 @@ use Illuminate\Support\Facades\DB;
 
 class MedicineListController extends Controller
 {
+    public function store(Request $request)
+    {
+        $medical_record_id  = $request->input('patient_id');
+        $stock_id           = $request->input('user_id');
+        $quantity           = $request->input('status');
+
+        MedicineList::create([
+            'medical_record_id'     => $medical_record_id,
+            'stock_id'              => $stock_id,
+            'quantity'              => $quantity,
+        ]);
+
+        return response()->json([
+            'message'   => 'Berhasil input data',
+        ], 200);    
+    }
+
     public function getListByMedicalRecord($id) 
     {
         $medicine_list = MedicineList::with('stock')->where('medical_record_id', $id)->get();

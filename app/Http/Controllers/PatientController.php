@@ -67,7 +67,13 @@ class PatientController extends Controller
 
     public function getMedicalRecord($id)
     {
-        $medicalRecord = MedicalRecord::where('patient_id', $id)->with('medicineLists')->get();
-        return response()->json($medicalRecord);
+        $medicalRecord = MedicalRecord::where('patient_id', $id)
+                            ->with('medicineLists', 'user')
+                            ->get();
+                            
+        return response()->json([
+            'message'   => 'ok',
+            'result'    => $medicalRecord,
+        ], 200);    
     }
 }
