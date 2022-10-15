@@ -102,6 +102,11 @@
                         
                     </ul>
                 </li>
+
+                <li class="{{ (request()->is('report*')) ? 'active' : '' }}">
+                    <a href="" class="">
+                        <i class="fas fa-bar-chart-o"></i>laporan</a>
+                </li>
                 @endcan
                 
                 
@@ -112,10 +117,6 @@
                 </li>
                 @endcanany
                 
-                <li class="{{ (request()->is('sell*')) ? 'active' : '' }}">
-                    <a href="" class="">
-                        <i class="fas fa-bar-chart-o"></i>laporan</a>
-                </li>
                 <li class="{{ (request()->is('about')) ? 'active' : '' }}">
                     <a href="#" onclick="logout()">
                         <i class="fas fa-power-off"></i>Log Out</a>
