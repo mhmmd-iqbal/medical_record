@@ -11,7 +11,81 @@
 
         function patientRegister()
         {
-            $('#staticModal').modal('toggle')
+            $('#queueModal').modal('toggle')
+        }
+
+        function checkNIK()
+        {
+            let nik = $('input[name=nik]').val()
+            let url = "{{route('patient.show', ':nik' )}}".replace(':nik', nik)
+
+            ajaxRequest('GET', url).then((result) => {
+                if (result.data) {
+                    notification('success', 'Data Pasien Ditemukan!')
+                    $('input[name=name]').attr('readonly', true);
+                    $('input[name=date_of_birth]').attr('readonly', true);
+                    $('input[name=phone]').attr('readonly', true);
+                    $('input[name=gender]').attr('disabled', true);
+                } else {
+                    notification('warning', 'Data Pasien Tidak Ditemukan!')
+                    $('input[name=name]').attr('readonly', false);
+                    $('input[name=date_of_birth]').attr('readonly', false);
+                    $('input[name=phone]').attr('readonly', false);
+                    $('input[name=gender]').attr('disabled', false);
+                }
+                }).catch((err) => {
+                    
+                });
+        }
+
+        function submitQueue()
+        {
+            let nik             = $('input[name=nik]').val()
+            let name            = $('input[name=name]').val()
+            let phone           = $('input[name=phone]').val()
+            let gender          = $('input[name=gender]').val()
+            let date_of_birth   = $('input[name=date_of_birth]').val()
+            let medical_issue   = $('textarea[name=medical_issue]').val()
+            let poliklinik_id   = $('select[name=poliklinik_id]').val()
+
+            if(nik && name && date_of_birth && phone && gender && medical_issue && poliklinik_id) {
+                let url     = "{{route('patient.store')}}"
+                let data    = {
+                        nik: nik,
+                        name: name,
+                        phone: phone,
+                        date_of_birth: date_of_birth,
+                        medical_issue: medical_issue,
+                        poliklinik_id: poliklinik_id
+                    }
+
+                ajaxRequest('POST', url, data).then((result) => {
+                    resetForm()
+                }).catch((err) => {
+                    
+                });
+            } else {
+                alert('Input tidak boleh kosong!')
+            }
+
+        }
+
+        function resetForm()
+        {
+            $('input[name=nik]').val('')
+            $('input[name=name]').val('')
+            $('input[name=date_of_birth]').val('')
+            $('input[name=phone]').val('')
+            $('input[name=gender]').val('')
+            $('textarea[name=medical_issue]').val('')
+            $('select[name=poliklinik_id]').val('')
+
+            $('input[name=name]').attr('readonly', true);
+            $('input[name=date_of_birth]').attr('readonly', true);
+            $('input[name=phone]').attr('readonly', true);
+            $('input[name=gender]').attr('disabled', true);
+
+            $('#queueModal').modal('toggle')
         }
 
     </script>
@@ -79,12 +153,12 @@
 @endsection
 
 @section('modal')
-<div class="modal fade" id="staticModal" tabindex="-1" role="dialog" aria-labelledby="staticModalLabel" aria-hidden="true"
+<div class="modal fade" id="queueModal" tabindex="-1" role="dialog" aria-labelledby="queueModalLabel" aria-hidden="true"
 data-backdrop="static">
    <div class="modal-dialog modal-lg" role="document">
        <div class="modal-content">
            <div class="modal-header">
-               <h5 class="modal-title" id="staticModalLabel">Pendaftaran Peserta</h5>
+               <h5 class="modal-title" id="queueModalLabel">Pendaftaran Peserta</h5>
                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                    <span aria-hidden="true">&times;</span>
                </button>
@@ -97,10 +171,9 @@ data-backdrop="static">
                         </div>
                         <div class="col-12 col-md-9">
                             <div class="input-group">
-                                <input type="text" id="text-input" name="text-input" placeholder="Text" class="form-control">
-                                {{-- <small class="form-text text-muted">This is a help text</small> --}}
+                                <input type="text" id="text-input" name="nik" placeholder="" class="form-control">
                                 <div class="input-group-btn">
-                                    <button onclick="javascript:void(0)" class="btn btn-success" >
+                                    <button onclick="javascript:checkNIK()" class="btn btn-success" >
                                         <i class="fa fa-search"></i> Check
                                     </button>
                                 </div>
@@ -110,31 +183,28 @@ data-backdrop="static">
 
                     <div class="row form-group">
                         <div class="col col-md-3">
-                            <label for="email-input" class=" form-control-label">Nama</label>
+                            <label for="" class=" form-control-label">Nama</label>
                         </div>
                         <div class="col-12 col-md-9">
-                            <input type="text" id="email-input" name="email-input" placeholder="Enter Email" class="form-control">
-                            {{-- <small class="help-block form-text">Please enter your email</small> --}}
+                            <input type="text" readonly id="" name="name" placeholder="" class="form-control">
                         </div>
                     </div>
 
                     <div class="row form-group">
                         <div class="col col-md-3">
-                            <label for="email-input" class=" form-control-label">Tanggal Lahir</label>
+                            <label for="" class=" form-control-label">Tanggal Lahir</label>
                         </div>
                         <div class="col-12 col-md-9">
-                            <input type="date" id="email-input" name="email-input" placeholder="Enter Email" class="form-control">
-                            {{-- <small class="help-block form-text">Please enter your email</small> --}}
+                            <input type="date" readonly id="" name="date_of_birth" placeholder="" class="form-control">
                         </div>
                     </div>
 
                     <div class="row form-group">
                         <div class="col col-md-3">
-                            <label for="email-input" class=" form-control-label">No HP</label>
+                            <label for=""  class=" form-control-label">No HP</label>
                         </div>
                         <div class="col-12 col-md-9">
-                            <input type="text" id="email-input" name="email-input" placeholder="Enter Email" class="form-control">
-                            {{-- <small class="help-block form-text">Please enter your email</small> --}}
+                            <input type="text" readonly id="" name="phone" placeholder="" class="form-control">
                         </div>
                     </div>
                     
@@ -145,11 +215,11 @@ data-backdrop="static">
                         <div class="col col-md-9">
                             <div class="form-check-inline form-check">
                                 <label for="inline-radio1" class="form-check-label mr-2">
-                                    <input type="radio" id="inline-radio1" name="inline-radios" value="option1" class="form-check-input">Pria
+                                    <input type="radio" disabled id="inline-radio1" name="gender" value="male" class="form-check-input">Pria
                                 </label>
                                 
                                 <label for="inline-radio3" class="form-check-label mr-2">
-                                    <input type="radio" id="inline-radio3" name="inline-radios" value="option3" class="form-check-input">Wanita
+                                    <input type="radio" disabled id="inline-radio3" name="gender" value="female" class="form-check-input">Wanita
                                 </label>
                             </div>
                         </div>
@@ -160,7 +230,7 @@ data-backdrop="static">
                             <label for="textarea-input" class=" form-control-label">Keluhan Awal</label>
                         </div>
                         <div class="col-12 col-md-9">
-                            <textarea name="textarea-input" id="textarea-input" rows="2" placeholder="Content..." class="form-control"></textarea>
+                            <textarea name="medical_issue" id="" rows="2" placeholder="Keluhan..." class="form-control"></textarea>
                         </div>
                     </div>
                     
@@ -169,11 +239,11 @@ data-backdrop="static">
                             <label for="select" class="form-control-label">Poliklinik</label>
                         </div>
                         <div class="col-12 col-md-9">
-                            <select name="select" id="select" class="form-control">
-                                <option value="0">Please select</option>
-                                <option value="1">Option #1</option>
-                                <option value="2">Option #2</option>
-                                <option value="3">Option #3</option>
+                            <select name="poliklinik_id" id="select" class="form-control">
+                                <option value="" selected disabled >-- Pilih Poliklinik --</option>
+                                @foreach ($poliklinik as $item)
+                                    <option value="{{$item->id}}" > {{$item->code}} - {{$item->name}} </option>
+                                @endforeach
                             </select>
                         </div>
                     </div>
@@ -190,8 +260,8 @@ data-backdrop="static">
                 </div>
            </div>
            <div class="modal-footer">
-               <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-               <button type="button" class="btn btn-success">Confirm</button>
+               <button type="button" class="btn btn-secondary" onclick="javascript:resetForm()" >Cancel</button>
+               <button type="button" class="btn btn-success" onclick="javascript:submitQueue()">Confirm</button>
            </div>
        </div>
    </div>

@@ -2,11 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Product;
+use App\Models\Poliklinik;
 use Illuminate\Http\Request;
-use App\Models\ProductCategory;
-use App\Models\SellTransaction;
-use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 
 class DashboardController extends Controller
@@ -16,7 +13,8 @@ class DashboardController extends Controller
         $user = Auth::user();
         switch ($user->auth_level) {
             case 'admin':
-                return view('pages.admin.dashboard');
+                $poliklinik = Poliklinik::get();
+                return view('pages.admin.dashboard', compact('poliklinik'));
                 break;
             case 'poliklinik':
                 break;
