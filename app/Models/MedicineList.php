@@ -29,6 +29,8 @@ class MedicineList extends Model
         'deleted_at'    => 'date:Y:m:d H:i:s',
     ];
 
+    protected $with = ['stock'];
+
     protected $hidden = [];
 
     public function medicalRecord()
