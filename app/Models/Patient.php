@@ -29,7 +29,7 @@ class Patient extends Model
         'updated_at'    => 'date:Y-m-d H:i:s',
         'deleted_at'    => 'date:Y:m:d H:i:s',
     ];
-
+    protected $appends = ['age'];
     protected $hidden = [];
 
     public function getAgeAttribute()
