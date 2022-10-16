@@ -27,7 +27,7 @@ class QueueController extends Controller
 
     public function indexApi()
     {
-        $queues = Queue::with('patient.medicalRecords', 'poliklinik')->get();
+        $queues = Queue::with('patient.medicalRecords', 'poliklinik')->whereDate('created_at', now())->get();
         return $queues;
     }
 
