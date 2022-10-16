@@ -79,10 +79,10 @@
                     <a href="{{ route('queue.index') }} ">
                         <i class="fas fa-user"></i>List Antrian</a>
                 </li>
-                <li>
+                {{-- <li>
                     <a href="{{ route('dashboard') }} ">
                         <i class="fas fa-hospital-o"></i>Rekam Medis</a>
-                </li>
+                </li> --}}
                 @can('isAdmin')
                     <li class="has-sub {{ request()->is('master') ? 'active' : '' }}">
                         <a class="js-arrow" href="#">
@@ -102,10 +102,10 @@
                         </ul>
                     </li>
 
-                    <li class="{{ request()->is('report*') ? 'active' : '' }}">
+                    {{-- <li class="{{ request()->is('report*') ? 'active' : '' }}">
                         <a href="" class="">
                             <i class="fas fa-bar-chart-o"></i>laporan</a>
-                    </li>
+                    </li> --}}
                 @endcan
 
 
