@@ -34,6 +34,8 @@ class MedicalRecord extends Model
 
     protected $hidden = [];
 
+    protected $with = ['user', 'medicineLists'];
+
     public function patient()
     {
         return $this->belongsTo(Patient::class, 'patient_id', 'id');
