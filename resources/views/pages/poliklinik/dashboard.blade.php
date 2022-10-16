@@ -9,7 +9,7 @@
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script>
         let idPatient
-        let medicalIssue
+        var medicalIssue
         const patientDetail = (e) => {
             idPatient = $(e).data().value
             medicalIssue = $(e).data().medical_issue

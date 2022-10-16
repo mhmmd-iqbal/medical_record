@@ -25,7 +25,6 @@ class DashboardController extends Controller
                 $poliklinik = Poliklinik::where('user_id', Auth::user()->id)->first();
                 $medicines = Stock::all();
                 $queues = $poliklinik->queues()->whereDate('created_at', now())->with('patient')->get();
-                return $queues;
                 if($request->ajax()){
                     return DataTables::of($queues)
                         ->addIndexColumn()
