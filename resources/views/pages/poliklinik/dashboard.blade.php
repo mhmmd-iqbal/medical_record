@@ -203,7 +203,7 @@
                 }
 
                 ajaxRequest('POST', url, data).then((result) => {
-                    console.log(result)
+                    toastr.success(`Data berhasil disimpan`)
                     resetForm()
                 }).catch((err) => {
 
