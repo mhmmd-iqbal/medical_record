@@ -18,7 +18,12 @@ class DashboardController extends Controller
         $user = Auth::user();
         switch ($user->auth_level) {
             case 'admin':
-                $poliklinik = Poliklinik::withCount('queues')->get();
+                $poliklinik = Poliklinik::with(['queues' => function ($query) {
+                    $query->whereDate('created_at', now());
+                }])->get();
+                foreach ($poliklinik as $key => $value) {
+                    $poliklinik[$key]->queues_count = $poliklinik[$key]->queues->count();
+                }
                 return view('pages.admin.dashboard', compact('poliklinik'));
                 break;
             case 'poliklinik':
