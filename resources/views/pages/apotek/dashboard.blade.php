@@ -78,7 +78,7 @@
             document.querySelectorAll('input[type=checkbox]').forEach((element, index) => {
                 input[index] = {
                     id: $(element).data('id'),
-                    quantity: $(element).data('id'),
+                    quantity: $(element).data('quantity'),
                     status: $(element).is(':checked'),
                 }
             });
@@ -149,7 +149,8 @@
                                                         </td>
                                                         <td>
                                                             <a href="javascript:void(0)" onclick="javascript:detail(this)"
-                                                                data-id="{{ $item->id }}">Detail</a>
+                                                                data-id="{{ $item->id }}"
+                                                                data-quantity="{{ $item->quantity }}">Detail</a>
                                                         </td>
                                                     </tr>
                                                 @endforeach

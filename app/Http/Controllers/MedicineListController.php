@@ -50,8 +50,7 @@ class MedicineListController extends Controller
             // foreach list approve, cek stock and minus
             foreach ($list as $item) {
                 $medicine = MedicineList::find($item['id']);
-                
-                $medicine->update(['confirmed', true]);
+                $medicine->update(['confirmed', 1]);
 
                 $medicine->stock()->decrement('quantity', (int) $item['quantity']);
             }
