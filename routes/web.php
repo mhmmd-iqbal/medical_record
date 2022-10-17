@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\MedicineListController;
+use App\Http\Controllers\MedicalRecordController;
 use App\Http\Controllers\PatientController;
 use App\Http\Controllers\PoliklinikController;
 use App\Http\Controllers\QueueController;
@@ -45,6 +46,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/queue/poliklinik/{id}/count', [QueueController::class, 'countQueue'])->name('queue.poliklinik.count');
     Route::get('/medicine-list/medical/{id}', [MedicineListController::class, 'getListByMedicalRecord'])->name('medicine.list.medical');
     Route::post('/medical-list/medical/{id}', [MedicineListController::class, 'approveMedicine'])->name('medicine.list.approve');
+    Route::post('/medical-record/store', [MedicalRecordController::class, 'store'])->name('medical-record.store');
     Route::get('/medical-record/{id}', [PatientController::class, 'getMedicalRecord'])->name('medical-record.show');
     
     Route::get('/stock', [StockController::class, 'index'] )->name('stock.index');

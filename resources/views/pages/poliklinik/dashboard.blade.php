@@ -8,15 +8,76 @@
 @section('custom_scripts')
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script>
+        var itemsMedicines = []
+        var indexMedicine = 0
+
         let idPatient
         var medicalIssue
         const patientDetail = (e) => {
             idPatient = $(e).data().value
             medicalIssue = $(e).data().medical_issue
-            console.log(medicalIssue)
             $('#medical_issue').html(medicalIssue)
             $('#medicalRecordModal').modal('toggle')
             getMedicalRecord(idPatient)
+        }
+
+        function addMedicineList() {
+            let medicalHandle = $('input[name=medical_handle]').val()
+            let stockID = $('select[name=stock_id]').val()
+            let stockName = $('select[name=stock_id] option:selected').text()
+            let quantity = $('input[name=quantity]').val()
+
+            if (stockID == '' || quantity == '') {
+                return alert('Isi semua data terlebih dahulu')
+            }
+
+            indexMedicine = indexMedicine + 1;
+            idItem = 'medicine' + indexMedicine;
+
+            itemsMedicines.push({
+                idItem: idItem,
+                stockID: stockID,
+                stockName: stockName,
+                quantity: quantity,
+            });
+
+            $("#stock_id option[value=0]").attr("selected", "selected");
+            $('input[name=quantity]').val('');
+
+            $("#dummy_data_medicine").remove();
+            $("#list_medicine").append(`
+                <tr id="${idItem}">
+                    <td>${indexMedicine}</td>
+                    <td>${stockName}</td>
+                    <td>${quantity}</td>
+                    <td><button type="button" onClick="removeListMedicine('${idItem}');" class="btn btn-icon btn-danger btn-relief-danger rounded-circle mb-1 waves-effect waves-light">X</button></td>
+                </tr>
+            `);
+
+            $('input[name=quantity]').focus();
+            var listItemMedicine = JSON.stringify(itemsMedicines);
+            // $("#pengalamanKerja").val(listItemPengalamanKerja);
+
+            console.table(itemsMedicines);
+            return false;
+        }
+
+        function removeListMedicine(id) {
+            var idItem = id.substr(id.length - 1);
+
+            $("#" + id).remove();
+
+            const deleteIndex = itemsMedicines.findIndex(item => item.idItem === id);
+            itemsMedicines.splice(deleteIndex, 1);
+            $("#bahasa").focus();
+
+            if (itemsMedicines.length == 0) {
+                $("#list_medicine").append(`
+                    <tr id="dummy_data_medicine">
+                        <td colspan="6">Isi minimal 1 data</td>
+                    </tr>
+                `);
+            }
         }
 
         function getMedicalRecord(id) {
@@ -127,48 +188,23 @@
             $('#medicalRecordList').html(content);
         }
 
-        function addMedicine() {
-            let medicalHandle = $('input[name=medical_handle]').val()
-            let stockID = $('select[name=stock_id]').val()
-            let quantity = $('input[name=quantity]').val()
-
-
-        }
-
-        function submitQueue() {
-            let nik = $('input[name=nik]').val()
-            let name = $('input[name=name]').val()
-            let phone = $('input[name=phone]').val()
-            let gender = $('input[name=gender]').val()
-            let date_of_birth = $('input[name=date_of_birth]').val()
-            let medical_issue = $('textarea[name=medical_issue]').val()
-            let poliklinik_id = $('select[name=poliklinik_id]').val()
-
-            if (nik && name && date_of_birth && phone && gender && medical_issue && poliklinik_id) {
-                let url = "{{ route('patient.store') }}"
+        function submitMedicalRecord() {
+            let userID = "{{ Auth::user()->id }}"
+            let medicalHandle = $('textarea[name=medical_handle]').val()
+            console.log(idPatient, userID, medicalHandle, medicalIssue)
+            if (idPatient && userID && medicalHandle && medicalIssue) {
+                let url = "{{ route('medical-record.store') }}"
                 let data = {
-                    nik: nik,
-                    name: name,
-                    phone: phone,
-                    gender: gender,
-                    date_of_birth: date_of_birth,
-                    medical_issue: medical_issue,
-                    poliklinik_id: poliklinik_id
+                    patient_id: idPatient,
+                    user_id: userID,
+                    medical_hanlde: medicalHandle,
+                    medical_issue: medicalIssue,
+                    medicine_list: itemsMedicines
                 }
 
                 ajaxRequest('POST', url, data).then((result) => {
-                    let url = "{{ route('queue.poliklinik.count', ':id') }}".replace(':id', poliklinik_id)
-
-                    ajaxRequest('GET', url).then(res => {
-                        let count = res.result
-                        let test = $(`#queue-poliklinik-${poliklinik_id}`).html(String(count).padStart(2,
-                            '0'))
-                        toastr.success(`Antrian telah diinput!`)
-                        resetForm()
-                    }).catch(err => {
-
-                    })
-
+                    console.log(result)
+                    resetForm()
                 }).catch((err) => {
 
                 });
@@ -178,21 +214,18 @@
         }
 
         function resetForm() {
-            $('input[name=nik]').val('')
-            $('input[name=name]').val('')
-            $('input[name=date_of_birth]').val('')
-            $('input[name=phone]').val('')
-            $('input[name=gender]').prop('checked', false)
-            $('textarea[name=medical_issue]').val('')
-            $('select[name=poliklinik_id]').val('')
-
-            $('input[name=name]').attr('readonly', true);
-            $('input[name=date_of_birth]').attr('readonly', true);
-            $('input[name=phone]').attr('readonly', true);
-            $('input[name=gender]').attr('disabled', true);
-
-            $('#queue-no').html(String(0).padStart(2, '0'))
+            $('textarea[name=medical_handle]').val('')
+            $("#stock_id option[value=0]").attr("selected", "selected")
             $('#medicalRecordModal').modal('toggle')
+            $('input[name=quantity]').val('')
+            itemsMedicines = []
+
+            $("#list_medicine").empty()
+            $("#list_medicine").append(`
+                <tr id="dummy_data_medicine">
+                    <td colspan="4">Tambah data terlebih dahulu</td>
+                </tr>
+            `);
         }
 
         const listData = $('#list-datatables').DataTable({
@@ -337,7 +370,7 @@
                                         <label for="select" class="form-control-label">Obat</label>
                                     </div>
                                     <div class="col-12 col-md-9">
-                                        <select name="stock_id" id="select" class="form-control">
+                                        <select name="stock_id" id="stock_id" class="form-control">
                                             <option value="" selected disabled>-- Pilih Obat --</option>
                                             @foreach ($medicines as $item)
                                                 <option value="{{ $item->id }}"> {{ $item->name }} -
@@ -360,14 +393,37 @@
                                 </div>
                             </div>
                             <div class="col-1">
-                                <button type="button" class="btn btn-success" onclick="javascript:addMedicine()">+</button>
+                                <button type="button" class="btn btn-success"
+                                    onclick="javascript:addMedicineList()">+</button>
+                            </div>
+                        </div>
+
+                        <div class="row mt-3">
+                            <div class="col-12">
+                                <table id="datatable"
+                                    class="table zero-configuration table-striped table-bordered text-center">
+                                    <thead>
+                                        <tr>
+                                            <th>No</th>
+                                            <th>Nama Obat</th>
+                                            <th>Quantity</th>
+                                            <th>Aksi</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="list_medicine">
+                                        <tr id="dummy_data_medicine">
+                                            <td colspan="4">Tambah data terlebih dahulu</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" onclick="javascript:resetForm()">Cancel</button>
-                    <button type="button" class="btn btn-success" onclick="javascript:submitQueue()">Confirm</button>
+                    <button type="button" class="btn btn-success"
+                        onclick="javascript:submitMedicalRecord()">Confirm</button>
                 </div>
             </div>
         </div>
